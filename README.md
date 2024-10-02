@@ -48,3 +48,7 @@ To simulate a non-existent manager error, follow these steps:
 - Open the `/fake-db/staffs.js` file.
 - Assign a non-existent ManagerId to one of the staff members. For example, set the ManagerId to a number that doesn’t exist in the current staff list, such as 500.
 - Save the file and refresh the app. The list of staff with non-existent managers will be displayed.
+
+## If I could use a real database:
+
+Most likely, I would use Zustand for data fetching and state management.
