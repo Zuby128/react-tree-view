@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import TreeNode from "./TreeNode";
 import Loading from "./Loading";
 
@@ -20,7 +20,7 @@ const TreeView = ({
     setCyclicError(cyclicDependencies);
   }, [treeData, nonExistedList, cyclicDependencies]);
 
-  const updateNodeAndChildren = (node, checked) => {
+  const updateNodeAndChildren = useCallback((node, checked) => {
     node.checked = checked;
 
     if (checked) {
@@ -35,25 +35,28 @@ const TreeView = ({
       );
     }
     return node;
-  };
+  }, []);
 
-  const handleCheck = (id, checked) => {
-    const updateNodeState = (nodes) => {
-      return nodes.map((node) => {
-        if (node.Id === id) {
-          node = updateNodeAndChildren(node, checked);
-        } else if (node.children) {
-          node.children = updateNodeState(node.children);
-        }
-        return node;
-      });
-    };
+  const handleCheck = useCallback(
+    (id, checked) => {
+      const updateNodeState = (nodes) => {
+        return nodes.map((node) => {
+          if (node.Id === id) {
+            node = updateNodeAndChildren(node, checked);
+          } else if (node.children) {
+            node.children = updateNodeState(node.children);
+          }
+          return node;
+        });
+      };
 
-    const updatedNodes = updateNodeState(nodes);
-    setNodes(updatedNodes);
-  };
+      const updatedNodes = updateNodeState(nodes);
+      setNodes(updatedNodes);
+    },
+    [nodes, updateNodeAndChildren]
+  );
 
-  const onSelectedStaff = () => {
+  const onSelectedStaff = useCallback(() => {
     if (selectedStaff.length === 0) return;
     setButtonLoading(true);
     const staffs = selectedStaff.join(", ");
@@ -62,7 +65,7 @@ const TreeView = ({
       setButtonLoading(false);
       alert(`selected staff ids sent to DB as:\n${staffs}`);
     }, 1500);
-  };
+  }, [selectedStaff]);
 
   return (
     <div className="tree-view">
@@ -114,7 +117,8 @@ const TreeView = ({
         )}
       </div>
       <hr />
-      <div>
+      <h2>Cycled Dependencies</h2>
+      <div style={errorStaff.length > 0 ? { color: "red" } : { color: "blue" }}>
         {!loading ? (
           <div>
             {errorStaff.length > 0

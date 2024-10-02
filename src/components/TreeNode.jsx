@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const TreeNode = ({ node, handleCheck }) => {
+const TreeNode = React.memo(({ node, handleCheck }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleExpand = () => {
@@ -49,6 +49,6 @@ const TreeNode = ({ node, handleCheck }) => {
       )}
     </div>
   );
-};
+});
 
 export default TreeNode;
