@@ -18,7 +18,7 @@ const TreeView = ({
     setNodes(treeData);
     setErrorStaff(nonExistedList);
     setCyclicError(cyclicDependencies);
-  }, [treeData, nonExistedList]);
+  }, [treeData, nonExistedList, cyclicDependencies]);
 
   const updateNodeAndChildren = (node, checked) => {
     node.checked = checked;
@@ -92,14 +92,16 @@ const TreeView = ({
           >
             {errorStaff.length > 0 ? (
               <table>
-                {errorStaff?.map((v) => (
-                  <tr>
-                    <th>Id:</th>
-                    <td>{v?.Id}</td>
-                    <th>Name:</th>
-                    <td>{v?.Name}</td>
-                  </tr>
-                ))}
+                <tbody>
+                  {errorStaff?.map((v) => (
+                    <tr key={v?.Id}>
+                      <th>Id:</th>
+                      <td>{v?.Id}</td>
+                      <th>Name:</th>
+                      <td>{v?.Name}</td>
+                    </tr>
+                  ))}
+                </tbody>
               </table>
             ) : (
               "There is no invalid manager."
@@ -116,8 +118,8 @@ const TreeView = ({
         {!loading ? (
           <div>
             {errorStaff.length > 0
-              ? cyclicDependencies?.map((v) => (
-                  <div className="alert">
+              ? cyclicError?.map((v, i) => (
+                  <div className="alert" key={`key${i}`}>
                     Cycled dependency detected between these ids: {v.join(", ")}
                   </div>
                 ))
